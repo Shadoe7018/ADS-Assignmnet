@@ -1,0 +1,58 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+data = {
+    'Country': ['India', 'Japan', 'Canada', 'Australia', 'Singapore'],
+    'Male_Population_2022': [59256096, 22409244, 16036499, 12793831, 2046080],
+    'Female_Population_2022': [54808228, 26456090, 16381546, 12764688, 1942091]
+}
+
+# Create DataFrame
+df = pd.DataFrame(data)
+
+# Calculate total population
+df['Total_Population'] = df['Male_Population_2022'] + df['Female_Population_2022']
+
+# Sort DataFrame by total population
+df.sort_values(by='Total_Population', ascending=False, inplace=True)
+
+# Create butterfly chart
+fig, ax = plt.subplots(figsize=(10, 6), linewidth=2.5)  # Adjust the linewidth here
+
+# Plot male population
+bars1 = ax.barh(df['Country'], df['Male_Population_2022'], color='skyblue', label='Male Population')
+
+# Plot female population
+bars2 = ax.barh(df['Country'], -df['Female_Population_2022'], color='pink', label='Female Population')
+
+# Add vertical line at zero
+ax.axvline(0, color='gray', linewidth=0.8)
+
+# Add labels and title
+ax.set_xlabel('Population')
+ax.set_title('Male vs Female Population by Country (2022)')
+ax.legend()
+
+# Invert y-axis
+ax.invert_yaxis()
+
+# Add value labels on bars
+for bar in bars1:
+    width = bar.get_width()
+    ax.annotate('{:.1f}M'.format(width/10**6),
+                xy=(width, bar.get_y() + bar.get_height() / 2),
+                xytext=(3, 0),  # 3 points horizontal offset
+                textcoords="offset points",
+                ha='left', va='center')
+
+for bar in bars2:
+    width = bar.get_width()
+    ax.annotate('{:.1f}M'.format(-width/10**6),  # Add a negative sign to show on the left side of the bar
+                xy=(width, bar.get_y() + bar.get_height() / 2),
+                xytext=(-3, 0),  # 3 points horizontal offset
+                textcoords="offset points",
+                ha='right', va='center')
+
+# Show plot
+plt.tight_layout()
+plt.show()

@@ -1,0 +1,137 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+data = {
+    'Country': ['India', 'Japan', 'Canada', 'Australia', 'Singapore'],
+    'Male_Population_2022': [59256096, 22409244, 16036499, 12793831, 2046080],
+    'Female_Population_2022': [54808228, 26456090, 16381546, 12764688, 1942091]
+}
+
+# Create DataFrame
+df = pd.DataFrame(data)
+
+# Calculate total population
+df['Total_Population'] = df['Male_Population_2022'] + df['Female_Population_2022']
+
+# Sort DataFrame by total population
+df.sort_values(by='Total_Population', ascending=False, inplace=True)
+
+# Create butterfly chart
+fig, ax = plt.subplots(figsize=(10, 6), linewidth=2.5)  # Adjust the linewidth here
+
+# Plot male population
+bars1 = ax.barh(df['Country'], df['Male_Population_2022'], color='skyblue', label='Male Population')
+
+# Plot female population
+bars2 = ax.barh(df['Country'], -df['Female_Population_2022'], color='pink', label='Female Population')
+
+# Add vertical line at zero
+ax.axvline(0, color='gray', linewidth=0.8)
+
+# Add labels and title
+ax.set_xlabel('Population')
+ax.set_title('Male vs Female Population by Country (2022)')
+ax.legend()
+
+# Invert y-axis
+ax.invert_yaxis()
+
+# Add value labels on bars
+for bar in bars1:
+    width = bar.get_width()
+    ax.annotate('{:.1f}M'.format(width/10**6),
+                xy=(width, bar.get_y() + bar.get_height() / 2),
+                xytext=(3, 0),  # 3 points horizontal offset
+                textcoords="offset points",
+                ha='left', va='center')
+
+for bar in bars2:
+    width = bar.get_width()
+    ax.annotate('{:.1f}M'.format(-width/10**6),  # Add a negative sign to show on the left side of the bar
+                xy=(width, bar.get_y() + bar.get_height() / 2),
+                xytext=(-3, 0),  # 3 points horizontal offset
+                textcoords="offset points",
+                ha='right', va='center')
+
+# Show plot
+plt.tight_layout()
+plt.show()
+
+
+#-----------------------------------------------------------------------------
+
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+data = {
+    'Country': ['Japan', 'India', 'Canada', 'Australia', 'Singapore'],
+    'Cancer': [217.5, 196.7, 204.9, 195.5, 227.3],
+    'Heart Disease': [187.1, 278.2, 172.8, 100.5, 158.4],
+    'Stroke': [49.6, 134.3, 44.8, 38.6, 30.7],
+    'Lower Respiratory Infections': [28.6, 120.9, 9.6, 12.3, 4.2],
+    'Diabetes': [18.4, 95.1, 23.3, 14.6, 11.6]
+}
+
+# Create DataFrame
+df = pd.DataFrame(data)
+
+# Set 'Country' as index
+df.set_index('Country', inplace=True)
+
+# Transpose DataFrame to have causes of death as rows and countries as columns
+df = df.T
+
+# Plot heatmap
+plt.figure(figsize=(10, 6))
+sns.heatmap(df, annot=True, cmap='coolwarm', fmt=".1f", linewidths=0.5)
+plt.title('Causes of Death Comparison in Various Countries')
+plt.xlabel('Country')
+plt.ylabel('Cause of Death')
+plt.yticks(rotation=0)  # Rotate y-axis labels for better readability
+plt.show()
+
+
+#----------------------------------------------------------------------------------
+
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+data = {
+    'Country': ['Japan', 'India', 'Canada', 'Australia', 'Singapore'],
+    'Men_Cancer_Death': [500, 450, 400, 380, 475],
+    'Women_Cancer_Death': [300, 250, 300, 280, 320],
+    'Men_Heart_Disease_Death': [600, 650, 550, 500, 625],
+    'Women_Heart_Disease_Death': [700, 750, 650, 600, 725],
+    'Men_Stroke_Death': [200, 180, 160, 150, 190],
+    'Women_Stroke_Death': [150, 130, 140, 120, 160],
+    'Men_Low_Respiratory_Infection_Death': [300, 320, 280, 270, 310],
+    'Women_Low_Respiratory_Infection_Death': [250, 280, 260, 240, 290],
+    'Men_Diabetes_Death': [150, 140, 130, 120, 145],
+    'Women_Diabetes_Death': [100, 90, 110, 100, 95]
+    # Add more causes of death if needed
+}
+
+# Create DataFrame
+df = pd.DataFrame(data)
+
+# Melt the DataFrame to long format for easier plotting
+df_melted = pd.melt(df, id_vars=['Country'], var_name='Cause_of_Death', value_name='Death_Count')
+
+# Extract gender from 'Cause_of_Death'
+df_melted['Gender'] = df_melted['Cause_of_Death'].apply(lambda x: x.split('_')[0])
+
+# Extract cause of death from 'Cause_of_Death'
+df_melted['Cause_of_Death'] = df_melted['Cause_of_Death'].apply(lambda x: x.split('_')[1])
+
+# Plot scatter plot
+plt.figure(figsize=(12, 8))
+sns.scatterplot(data=df_melted, x='Country', y='Death_Count', hue='Cause_of_Death', style='Gender', s=100)
+plt.title('Death Cause Comparison of Men and Women Population')
+plt.xlabel('Country')
+plt.ylabel('Death Count')
+plt.legend(title='Cause of Death', bbox_to_anchor=(1.05, 1), loc='upper left')
+plt.xticks(rotation=45)
+plt.grid(True)
+plt.show()

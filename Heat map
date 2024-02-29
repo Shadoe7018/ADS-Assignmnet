@@ -1,0 +1,30 @@
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+data = {
+    'Country': ['Japan', 'India', 'Canada', 'Australia', 'Singapore'],
+    'Cancer': [217.5, 196.7, 204.9, 195.5, 227.3],
+    'Heart Disease': [187.1, 278.2, 172.8, 100.5, 158.4],
+    'Stroke': [49.6, 134.3, 44.8, 38.6, 30.7],
+    'Lower Respiratory Infections': [28.6, 120.9, 9.6, 12.3, 4.2],
+    'Diabetes': [18.4, 95.1, 23.3, 14.6, 11.6]
+}
+
+# Create DataFrame
+df = pd.DataFrame(data)
+
+# Set 'Country' as index
+df.set_index('Country', inplace=True)
+
+# Transpose DataFrame to have causes of death as rows and countries as columns
+df = df.T
+
+# Plot heatmap
+plt.figure(figsize=(10, 6))
+sns.heatmap(df, annot=True, cmap='coolwarm', fmt=".1f", linewidths=0.5)
+plt.title('Causes of Death Comparison in Various Countries')
+plt.xlabel('Country')
+plt.ylabel('Cause of Death')
+plt.yticks(rotation=0)  # Rotate y-axis labels for better readability
+plt.show()

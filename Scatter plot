@@ -1,0 +1,41 @@
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+data = {
+    'Country': ['Japan', 'India', 'Canada', 'Australia', 'Singapore'],
+    'Men_Cancer_Death': [500, 450, 400, 380, 475],
+    'Women_Cancer_Death': [300, 250, 300, 280, 320],
+    'Men_Heart_Disease_Death': [600, 650, 550, 500, 625],
+    'Women_Heart_Disease_Death': [700, 750, 650, 600, 725],
+    'Men_Stroke_Death': [200, 180, 160, 150, 190],
+    'Women_Stroke_Death': [150, 130, 140, 120, 160],
+    'Men_Low_Respiratory_Infection_Death': [300, 320, 280, 270, 310],
+    'Women_Low_Respiratory_Infection_Death': [250, 280, 260, 240, 290],
+    'Men_Diabetes_Death': [150, 140, 130, 120, 145],
+    'Women_Diabetes_Death': [100, 90, 110, 100, 95]
+    # Add more causes of death if needed
+}
+
+# Create DataFrame
+df = pd.DataFrame(data)
+
+# Melt the DataFrame to long format for easier plotting
+df_melted = pd.melt(df, id_vars=['Country'], var_name='Cause_of_Death', value_name='Death_Count')
+
+# Extract gender from 'Cause_of_Death'
+df_melted['Gender'] = df_melted['Cause_of_Death'].apply(lambda x: x.split('_')[0])
+
+# Extract cause of death from 'Cause_of_Death'
+df_melted['Cause_of_Death'] = df_melted['Cause_of_Death'].apply(lambda x: x.split('_')[1])
+
+# Plot scatter plot
+plt.figure(figsize=(12, 8))
+sns.scatterplot(data=df_melted, x='Country', y='Death_Count', hue='Cause_of_Death', style='Gender', s=100)
+plt.title('Death Cause Comparison of Men and Women Population')
+plt.xlabel('Country')
+plt.ylabel('Death Count')
+plt.legend(title='Cause of Death', bbox_to_anchor=(1.05, 1), loc='upper left')
+plt.xticks(rotation=45)
+plt.grid(True)
+plt.show()
